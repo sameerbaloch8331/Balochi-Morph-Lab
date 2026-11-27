@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Balochi Morph Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Nunito:wght@500;700;800&display=swap">
+<style>
+:root{--bg:#FBFAF6;--fg:#1B2B33;--mut:#4A5B64;--card:#FFFFFF;--line:#C9D3D8;--brand:#1F4E5F;--on:#FFFFFF;
+--root:#BFE3DD;--prefix:#F9DDA0;--suffix:#F4B9B9;--free:#C9DCF4;--chipfg:#10303A;--ok:#1E6B3A;--bad:#9A2A2A;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10181C;--fg:#E8EEF0;--mut:#A9B8BF;--card:#18242A;--line:#33464F;--brand:#2C7A8C;--on:#FFFFFF;
+--root:#1F5F5A;--prefix:#7A5A10;--suffix:#7E3A3A;--free:#2D4F7C;--chipfg:#F2F7F8;--ok:#7FD39B;--bad:#F2A0A0;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#10181C;--fg:#E8EEF0;--mut:#A9B8BF;--card:#18242A;--line:#33464F;--brand:#2C7A8C;--on:#FFFFFF;
+--root:#1F5F5A;--prefix:#7A5A10;--suffix:#7E3A3A;--free:#2D4F7C;--chipfg:#F2F7F8;--ok:#7FD39B;--bad:#F2A0A0;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:Nunito,system-ui,sans-serif;font-size:18px;line-height:1.5}
+main{max-width:980px;margin:0 auto;padding:20px 16px 48px}
+h1,h2{font-family:Fredoka,system-ui,sans-serif;margin:0}
+h1{font-size:clamp(34px,7vw,56px);line-height:1.1}
+h2{font-size:28px;margin-bottom:6px}
+header{background:var(--brand);color:var(--on);border-radius:22px;padding:24px 22px;margin-bottom:18px}
+header p{margin:8px 0 0;opacity:.95}
+section{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;margin-top:18px}
+.sub{color:var(--mut);margin:0 0 14px}
+.key{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{display:inline-flex;flex-direction:column;align-items:center;padding:6px 14px;border-radius:10px;color:var(--chipfg);font-weight:800;font-size:28px;line-height:1.2}
+.chip small{font-size:14px;font-weight:700;opacity:0;transition:opacity .3s;height:18px}
+.split .chip small{opacity:1}
+.t-root{background:var(--root)}.t-prefix{background:var(--prefix)}.t-suffix{background:var(--suffix)}.t-free{background:var(--free)}
+.key .chip{font-size:16px;padding:3px 12px}
+.words,.ends,.tabs,.quizbtns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;font-weight:800;color:var(--fg);background:var(--card);border:2px solid var(--line);border-radius:12px;padding:10px 16px;min-height:46px;cursor:pointer}
+button:hover{border-color:var(--brand)}
+button:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--brand);color:var(--on);border-color:var(--brand)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.stage{margin-top:16px;border:2px dashed var(--line);border-radius:16px;padding:18px;min-height:190px}
+.row{display:flex;flex-wrap:wrap;align-items:flex-start;gap:0;transition:gap .4s;margin:6px 0 12px}
+.split .row{gap:16px}
+.row .chip{transition:transform .4s}
+.mean{font-size:22px;font-weight:800}
+.tag{display:inline-block;border:2px solid var(--line);border-radius:999px;padding:1px 12px;font-size:15px;font-weight:800;color:var(--mut);margin-left:8px;vertical-align:middle}
+.note{color:var(--mut);margin:6px 0 0}
+.act{margin-top:12px;background:var(--brand);color:var(--on);border-color:var(--brand)}
+.big{font-family:Fredoka,sans-serif;font-size:clamp(34px,8vw,52px);font-weight:700}
+.fb{min-height:52px;margin-top:12px;font-weight:700}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+footer{margin-top:22px;color:var(--mut);font-size:15px}
+.eb{font-size:14px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--mut)}
+nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+nav a{padding:8px 14px;border:2px solid var(--line);border-radius:999px;color:var(--fg);text-decoration:none;font-weight:800;background:var(--card)}
+nav a:hover{border-color:var(--brand)}nav a:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.card{border:2px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--card)}
+.card h3{margin:0 0 4px;font-size:19px}
+.card p{margin:0;color:var(--mut);font-size:16px}
+.tile{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left}
+.tile .tw{font-size:26px}
+.tile .td{font-size:15px;font-weight:600;color:var(--mut)}
+.tb{width:100%;border-collapse:collapse;font-size:17px}
+.tb th,.tb td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+.tb th{background:var(--brand);color:var(--on)}
+.scroll{overflow-x:auto}
+select,input[type=text]{font:inherit;color:var(--fg);background:var(--card);border:2px solid var(--line);border-radius:10px;padding:8px 10px;min-height:44px;max-width:100%}
+label{font-weight:800;font-size:15px;display:block;margin:8px 0 4px}
+details{border-top:1px solid var(--line);padding:8px 0}
+summary{cursor:pointer;font-weight:800}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>Balochi Morph Lab</h1>
+<p>ENG 222 Morphology &amp; Syntax. Tap a word, split it into morphemes, then build verbs on the <b>gend-</b> paradigm.</p>
+<div class="key" aria-label="Colour key">
+<span class="chip t-root">root</span><span class="chip t-prefix">prefix</span><span class="chip t-suffix">suffix</span><span class="chip t-free">free word</span>
+</div>
+</header>
+<nav aria-label="Sections"><a href="#h-about">About</a><a href="#h-split">Task 1</a><a href="#h-par">Task 2</a><a href="#h-t3">Task 3</a><a href="#h-t4">Task 4</a><a href="#h-quiz">Quiz</a><a href="#h-gl">Glossary</a></nav>
+<section aria-labelledby="h-about">
+<div class="eb">Start here</div>
+<h2 id="h-about">About this lab</h2>
+<p>Balochi is an Iranian language of the Indo-Iranian branch of Indo-European, spoken mainly in Balochistan and neighbouring regions. <b>Morphology</b> is the study of word structure, and the <b>morpheme</b> is the smallest unit of meaning or grammatical function. For example, <span class="chip t-root" style="font-size:20px">kitāb</span> + <span class="chip t-suffix" style="font-size:20px">ān</span> gives <b>kitābān</b> “books”.</p>
+<p>The lab follows the four ENG 222 tasks: <b>Task 1</b> morphemes, <b>Task 2</b> affixes (inflection and derivation), <b>Task 3</b> word formation, and <b>Task 4</b> a language showcase. Every section is interactive: tap, flip, sort and answer. The forms follow published descriptions of Modern Standard/Southern Balochi and may vary by dialect.</p>
+</section>
+
+<section aria-labelledby="h-split">
+<div class="eb">Task 1 · Morphemes</div><h2 id="h-split">Split a word</h2>
+<p class="sub">Choose a word, then press <b>Split it</b>.</p>
+<div class="words" id="words" role="group" aria-label="Words"></div>
+<div class="stage" id="stage" aria-live="polite"></div>
+</section>
+
+<section aria-labelledby="h-fb">
+<div class="eb">Task 1 · Morphemes</div>
+<h2 id="h-fb">Free or bound? Lexical or grammatical?</h2>
+<p class="sub">Tap a tile to reveal how it is classified.</p>
+<div class="grid" id="tiles"></div>
+</section>
+<section aria-labelledby="h-rsb">
+<div class="eb">Task 1 · Morphemes</div>
+<h2 id="h-rsb">Root, stem and base</h2>
+<p class="sub">A <b>root</b> is the core lexical unit, a <b>stem</b> takes inflectional endings, and a <b>base</b> is whatever an affix attaches to. Step through <b>nakanān</b> to see them come apart.</p>
+<div class="tabs" id="steps" role="group" aria-label="Steps"></div>
+<div class="stage" id="sout" aria-live="polite" style="margin-top:12px"></div>
+</section>
+<section aria-labelledby="h-par">
+<div class="eb">Task 2 · Affixes</div>
+<h2 id="h-par">Build a verb</h2>
+<p class="sub">Pick a verb, then tap an ending to attach it.</p>
+<div class="tabs" id="tabs" role="group" aria-label="Verb"></div>
+<div class="stage" id="pstage" style="margin-top:12px"><div class="ends" id="ends" role="group" aria-label="Endings"></div><div id="pout" aria-live="polite" style="margin-top:14px"></div></div>
+</section>
+
+<section aria-labelledby="h-pf">
+<div class="eb">Task 2 · Affixes</div>
+<h2 id="h-pf">Prefix lab</h2>
+<p class="sub">Balochi uses a small set of verb prefixes. Pick one.</p>
+<div class="tabs" id="pftabs" role="group" aria-label="Prefix"></div>
+<div class="stage" id="pfout" aria-live="polite" style="margin-top:12px"></div>
+</section>
+<section aria-labelledby="h-id">
+<div class="eb">Task 2 · Affixes</div>
+<h2 id="h-id">Inflection versus derivation</h2>
+<div class="scroll"><table class="tb"><thead><tr><th>Inflectional</th><th>Derivational</th><th>What separates them</th></tr></thead><tbody>
+<tr><td>gendit “he/she sees”</td><td>kanōk “doer”</td><td><b>Category and lexeme.</b> gendit is still the same verb. kanōk is a new noun.</td></tr>
+<tr><td>gōkay “of the cow”</td><td>brātōk “little brother”</td><td><b>Meaning.</b> The genitive adds a relation only. -ōk changes the meaning.</td></tr>
+<tr><td>gendān “I see”</td><td>nindōk “sitter”</td><td><b>Paradigm.</b> gend- takes a full set of endings. -ōk gives one derived form.</td></tr></tbody></table></div>
+</section>
+<section aria-labelledby="h-sa">
+<div class="eb">Task 2 · Affixes</div>
+<h2 id="h-sa">Stem alternation (no affix needed)</h2>
+<p class="sub">Some verbs change their whole stem between present and past. Tap a card.</p>
+<div class="grid" id="stems"></div>
+</section>
+<section aria-labelledby="h-ex">
+<div class="eb">Task 2 · Affixes</div>
+<h2 id="h-ex">Exceptions to watch</h2>
+<div class="grid">
+<div class="card"><h3>-ān has two jobs</h3><p>Plural on nouns (kitābān), 1st person singular on verbs (gendān). The base decides.</p></div>
+<div class="card"><h3>-ay has two jobs</h3><p>2nd person singular (genday) and genitive (gōkay).</p></div>
+<div class="card"><h3>-ōk has two jobs</h3><p>Agent suffix (nindōk) and diminutive (brātōk).</p></div>
+<div class="card"><h3>-it or -t?</h3><p>3rd person singular is -it in gendit but -t in kant.</p></div>
+<div class="card"><h3>Is bad- a prefix?</h3><p>In badkār it is also a free word, so it can be read as a compound.</p></div>
+<div class="card"><h3>No infixes found</h3><p>No infix or circumfix appears in our data, so none is claimed.</p></div>
+</div>
+</section>
+<section aria-labelledby="h-t3">
+<div class="eb">Task 3 · Word formation</div>
+<h2 id="h-t3">The word factory</h2>
+<p class="sub">Three routes to new words are evidenced in our data.</p>
+<div class="grid">
+<div class="card"><h3><span class="chip t-root" style="font-size:18px">Compounding</span></h3><p>deljam “reassured”, delsyāh “troubled”, rahshōn “guide”, rahmdel “merciful”</p></div>
+<div class="card"><h3><span class="chip t-suffix" style="font-size:18px">Derivation</span></h3><p>garmī “heat”, tahnāī “loneliness”, gerāk “customer”, warāk “food”, wānendag “literate”</p></div>
+<div class="card"><h3><span class="chip t-free" style="font-size:18px">Borrowing (Persian)</span></h3><p>āzmāesh “test”, kōshesh “effort”, parwardegār “God, sustainer”</p></div>
+<div class="card"><h3>Not found in our data</h3><p>Reduplication, conversion, blending, clipping, acronyms and back-formation. This reflects the dataset, not the language.</p></div>
+</div>
+<h2 style="margin-top:20px;font-size:23px">Sort the word</h2>
+<div class="stage" id="q3" aria-live="polite"></div>
+</section>
+<section aria-labelledby="h-wug">
+<div class="eb">Task 3 · Word formation</div>
+<h2 id="h-wug">Wug-test lab</h2>
+<p class="sub">Can a speaker extend a pattern to a new word? Ask a real Balochi speaker (with permission, noting only their dialect) and record the answer here. This page keeps nothing, so copy your results into the portfolio.</p>
+<div class="grid" id="wug"></div>
+<p class="note" id="wsum" aria-live="polite" style="margin-top:12px"></p>
+</section>
+<section aria-labelledby="h-t4">
+<div class="eb">Task 4 · Showcase</div>
+<h2 id="h-t4">Read a sentence</h2>
+<p class="sub">Tap a word to see its gloss. Check the sentences against the grammar before submitting.</p>
+<div class="tabs" id="sen" role="group" aria-label="Sentence"></div>
+<div class="stage" id="sout2" aria-live="polite" style="margin-top:12px"></div>
+</section>
+<section aria-labelledby="h-en">
+<div class="eb">Task 4 · Showcase</div>
+<h2 id="h-en">Balochi and English</h2>
+<div class="scroll"><table class="tb"><thead><tr><th>Feature</th><th>Balochi</th><th>English</th></tr></thead><tbody>
+<tr><td>Agent noun (similar)</td><td>wān + ōk = wānōk</td><td>read + er = reader</td></tr>
+<tr><td>Compounding (similar)</td><td>del + jam = deljam</td><td>black + board = blackboard</td></tr>
+<tr><td>Present agreement (different)</td><td>six endings: gendān, genday, gendit, gendēn, gendēt, gendant</td><td>one overt ending: sees</td></tr>
+<tr><td>Genitive</td><td>lōg + ay = lōgay</td><td>house + ’s = house’s</td></tr></tbody></table></div>
+</section>
+<section aria-labelledby="h-quiz">
+<div class="eb">Check yourself</div>
+<h2 id="h-quiz">Inflection or derivation?</h2>
+<p class="sub">Does the ending give a grammatical form of the same word, or create a new word?</p>
+<div class="stage" id="qstage" aria-live="polite"></div>
+</section>
+
+<section aria-labelledby="h-gl">
+<div class="eb">Reference</div>
+<h2 id="h-gl">Glossary</h2>
+<details><summary>Morpheme</summary>The smallest unit of meaning or grammatical function.</details>
+<details><summary>Free and bound morphemes</summary>A free morpheme can stand alone (āp). A bound one must attach to a base (-ān).</details>
+<details><summary>Root, stem, base</summary>The root is the core lexical unit. The stem takes inflection. The base is any form an affix attaches to.</details>
+<details><summary>Prefix and suffix</summary>An affix added before or after a base.</details>
+<details><summary>Inflection</summary>Grammatical forms of one lexeme: person, number, case.</details>
+<details><summary>Derivation</summary>Building a new lexeme, often with a change of category or meaning.</details>
+<details><summary>Compounding and borrowing</summary>Joining two stems; taking a word from another language.</details>
+<details><summary>Allomorphy</summary>Different forms of one morpheme, such as -it and -t.</details>
+<details><summary>Lexicalisation</summary>A formed word whose meaning is no longer the plain sum of its parts (delsyāh).</details>
+<details><summary>Productivity and wug test</summary>How readily a pattern makes new words. A wug test asks a speaker to judge a new word built on that pattern.</details>
+</section>
+<footer>Forms follow published descriptions of Modern Standard/Southern Balochi (Jahani 2019) and the ENG 222 portfolio of Raheel Mairaj and Muhammad Sameer. Balochi varies by dialect, so check forms against the grammar or a speaker. Instructor: Ma’am Muniza Asad.</footer>
+</main>
+<script>
+var W=[
+{w:'kitābān',p:[['kitāb','root','book'],['ān','suffix','plural']],g:'\u201Cbooks\u201D',k:'inflection',n:'-ān marks plural on nouns but 1st person singular on verbs, so the base decides.'},
+{w:'marday',p:[['mard','root','man'],['ay','suffix','genitive']],g:'\u201Cof the man\u201D',k:'inflection',n:'The genitive adds a grammatical relation, not a new meaning.'},
+{w:'gendān',p:[['gend','root','see'],['ān','suffix','1st sg']],g:'\u201CI see\u201D',k:'inflection',n:'The same verb stem takes a different ending for each person.'},
+{w:'gendag',p:[['gend','root','see'],['ag','suffix','infinitive']],g:'\u201Cto see\u201D',k:'inflection',n:'-ag builds the infinitive.'},
+{w:'nindōk',p:[['nind','root','sit'],['ōk','suffix','agent']],g:'\u201Csitter\u201D',k:'derivation',n:'Verb to agent noun. The past stem of nind- is nesht-.'},
+{w:'kanōk',p:[['kan','root','do'],['ōk','suffix','agent']],g:'\u201Cdoer\u201D',k:'derivation',n:'The same -ōk builds an agent noun from kan-.'},
+{w:'nakanān',p:[['na','prefix','negation'],['kan','root','do'],['ān','suffix','1st sg']],g:'\u201CI do not do\u201D',k:'prefix + inflection',n:'Root and stem are kan-. The prefix na- attaches to the whole form kanān.'},
+{w:'shartir',p:[['shar','root','good'],['tir','suffix','comparative']],g:'\u201Cbetter\u201D',k:'inflection',n:'-tir marks the comparative.'},
+{w:'garmī',p:[['garm','root','warm'],['ī','suffix','abstract noun']],g:'\u201Cheat\u201D',k:'derivation',n:'Adjective to abstract noun.'},
+{w:'brātōk',p:[['brāt','root','brother'],['ōk','suffix','diminutive']],g:'\u201Clittle brother\u201D',k:'derivation',n:'-ōk is also the agent suffix, so one form has two jobs.'},
+{w:'deljam',p:[['del','root','heart'],['jam','root','collected']],g:'\u201Creassured\u201D',k:'compounding',n:'Two roots join to make one word.'},
+{w:'delsyāh',p:[['del','root','heart'],['syāh','root','black']],g:'\u201Ctroubled\u201D',k:'compounding',n:'Lexicalised: the meaning is not a literal \u201Cblack heart\u201D.'},
+{w:'āp',p:[['āp','free','water']],g:'\u201Cwater\u201D',k:'simple',n:'A free word with no further parts. It cannot be split.'}
+];
+var cur=0,isSplit=false;
+var wb=document.getElementById('words'),st=document.getElementById('stage');
+W.forEach(function(x,i){var b=document.createElement('button');b.textContent=x.w;b.setAttribute('aria-pressed','false');b.onclick=function(){cur=i;isSplit=false;drawStage()};wb.appendChild(b)});
+function chips(parts){return parts.map(function(q){return '<span class="chip t-'+q[1]+'">'+q[0]+'<small>'+q[1]+': '+q[2]+'</small></span>'}).join('')}
+function drawStage(){
+ var x=W[cur];
+ Array.prototype.forEach.call(wb.children,function(b,i){b.setAttribute('aria-pressed',i===cur?'true':'false')});
+ var canSplit=x.p.length>1;
+ st.className='stage'+(isSplit?' split':'');
+ st.innerHTML='<div class="row">'+chips(x.p)+'</div><div class="mean">'+x.w+' = '+x.g+'<span class="tag">'+x.k+'</span></div><p class="note">'+x.n+'</p>'+(canSplit?'<button class="act" id="sb">'+(isSplit?'Join it':'Split it')+'</button>':'');
+ var sb=document.getElementById('sb');
+ if(sb)sb.onclick=function(){isSplit=!isSplit;st.classList.toggle('split',isSplit);sb.textContent=isSplit?'Join it':'Split it'};
+}
+st.innerHTML='<p class="note">Pick a word above to begin.</p>';
+/* paradigm */
+var V={gend:{m:'see',e:[['ān','1st sg','I see'],['ay','2nd sg','you see'],['it','3rd sg','he/she sees'],['ēn','1st pl','we see'],['ēt','2nd pl','you (pl.) see'],['ant','3rd pl','they see']]},
+ kan:{m:'do',e:[['ān','1st sg','I do'],['ay','2nd sg','you do'],['t','3rd sg','he/she does'],['ēn','1st pl',null],['ēt','2nd pl',null],['ant','3rd pl',null]]}};
+var vb='gend',tabs=document.getElementById('tabs'),ends=document.getElementById('ends'),po=document.getElementById('pout');
+['gend','kan'].forEach(function(v){var b=document.createElement('button');b.textContent=v+'- \u201C'+V[v].m+'\u201D';b.dataset.v=v;b.onclick=function(){vb=v;drawEnds()};tabs.appendChild(b)});
+function drawEnds(){
+ Array.prototype.forEach.call(tabs.children,function(b){b.setAttribute('aria-pressed',b.dataset.v===vb?'true':'false')});
+ ends.innerHTML='';po.innerHTML='<p class="note">Tap an ending.</p>';
+ V[vb].e.forEach(function(e){var b=document.createElement('button');b.innerHTML='-'+e[0]+' <span style="font-weight:600">('+e[1]+')</span>';
+  if(e[2]===null){b.disabled=true;b.title='Not in our dataset'}
+  b.onclick=function(){Array.prototype.forEach.call(ends.children,function(c){c.setAttribute('aria-pressed','false')});b.setAttribute('aria-pressed','true');
+   po.innerHTML='<div class="big"><span class="chip t-root" style="font-size:inherit">'+vb+'</span> + <span class="chip t-suffix" style="font-size:inherit">'+e[0]+'</span> = '+vb+e[0]+'</div><div class="mean">\u201C'+e[2]+'\u201D<span class="tag">'+e[1]+'</span></div>'+(vb==='kan'&&e[0]==='t'?'<p class="note">The 3rd person ending appears as -t here but as -it on gend-.</p>':'')};
+  ends.appendChild(b)});
+ if(vb==='kan'){var n=document.createElement('p');n.className='note';n.style.width='100%';n.textContent='Greyed endings are not in our dataset for this verb.';ends.appendChild(n)}
+}
+drawEnds();
+/* quiz */
+var Q=[['gendit','inflection','Same verb, 3rd person singular form.'],['kanōk','derivation','A new noun \u201Cdoer\u201D built from the verb kan-.'],['gōkay','inflection','Genitive case: \u201Cof the cow\u201D, same noun.'],['brātōk','derivation','Diminutive: a new word, \u201Clittle brother\u201D.'],['garmī','derivation','Adjective becomes an abstract noun.'],['gendēn','inflection','Same verb, 1st person plural.'],['nindōk','derivation','Verb to agent noun.'],['marday','inflection','Genitive of mard.'],['tahnāī','derivation','Adjective to abstract noun.'],['gendant','inflection','Same verb, 3rd person plural.'],['wānōk','derivation','Verb \u201Cread\u201D to noun \u201Creader\u201D.'],['lōgay','inflection','Genitive: \u201Cof the house\u201D.']];
+var qi=0,sc=0,qs=document.getElementById('qstage');
+function drawQ(){
+ if(qi>=Q.length){qs.innerHTML='<div class="mean">Score: '+sc+' / '+Q.length+'</div><button class="act" id="rs">Play again</button>';document.getElementById('rs').onclick=function(){qi=0;sc=0;drawQ()};return}
+ qs.innerHTML='<div class="lb">Question '+(qi+1)+' of '+Q.length+'</div><div class="big">'+Q[qi][0]+'</div><div class="quizbtns" style="margin-top:10px"><button data-a="inflection">Inflection</button><button data-a="derivation">Derivation</button></div><div class="fb" id="fb"></div>';
+ Array.prototype.forEach.call(qs.querySelectorAll('button[data-a]'),function(b){b.onclick=function(){
+  var right=b.dataset.a===Q[qi][1];if(right)sc++;
+  Array.prototype.forEach.call(qs.querySelectorAll('button[data-a]'),function(c){c.disabled=true});
+  var fb=document.getElementById('fb');fb.innerHTML='<span class="'+(right?'ok':'bad')+'">'+(right?'Correct. ':'Not quite. It is '+Q[qi][1]+'. ')+'</span>'+Q[qi][2]+' <button class="act" id="nx">Next</button>';
+  document.getElementById('nx').onclick=function(){qi++;drawQ()};document.getElementById('nx').focus()}});
+}
+drawQ();
+function el(i){return document.getElementById(i)}
+var TL=[['āp','free','Free · lexical','Names a thing: water.'],['nān','free','Free · lexical','Names a thing: bread.'],['kitāb','free','Free · lexical','Names a thing: book.'],['mard','free','Free · lexical','Names a person: man.'],['-ān','suffix','Bound · grammatical','Plural on nouns, 1st person singular on verbs.'],['-ay','suffix','Bound · grammatical','Genitive, or 2nd person singular.'],['-it','suffix','Bound · grammatical','3rd person singular on verbs.'],['na-','prefix','Bound · grammatical','Negation, as in nakanān.'],['-ōk','suffix','Bound · derivational','Builds new nouns (nindōk) and diminutives (brātōk).'],['-tir','suffix','Bound · grammatical','Comparative, as in shartir.']];
+TL.forEach(function(t){var b=document.createElement('button');b.className='tile';b.setAttribute('aria-expanded','false');
+ b.innerHTML='<span class="chip t-'+t[1]+' tw">'+t[0]+'</span><span class="td" hidden>'+t[2]+'. '+t[3]+'</span>';
+ b.onclick=function(){var d=b.querySelector('.td'),o=d.hidden;d.hidden=!o;b.setAttribute('aria-expanded',String(o))};el('tiles').appendChild(b)});
+var SS=[['1. Root',[['kan','root','root and stem']],'The root kan- “do” is the core. As a verb stem it can take endings.'],
+['2. Add -ān',[['kan','root','root and stem'],['ān','suffix','1st sg']],'kan + ān = kanān “I do”. For the next step, kanān becomes the base.'],
+['3. Add na-',[['na','prefix','negation'],['kanān','root','base']],'na- attaches to the whole inflected form kanān, so here the base is not the root. Result: nakanān “I do not do”.']];
+var sb2=el('steps');SS.forEach(function(x){var b=document.createElement('button');b.textContent=x[0];b.onclick=function(){
+ Array.prototype.forEach.call(sb2.children,function(c){c.setAttribute('aria-pressed','false')});b.setAttribute('aria-pressed','true');
+ el('sout').className='stage split';el('sout').innerHTML='<div class="row">'+chips(x[1])+'</div><p class="note">'+x[2]+'</p>'};sb2.appendChild(b)});
+el('sout').innerHTML='<p class="note">Press a step.</p>';
+var PF=[['na-','na','kanān','nakanān','\u201CI do not do\u201D','Negates an indicative verb form. It attaches to the inflected form kanān.'],['ma-','ma','ro','maro','\u201Cdo not go\u201D','Forms a negative command.'],['be-','be','ras','beras','\u201Creach!\u201D','Marks an imperative.']];
+var pt=el('pftabs');PF.forEach(function(x){var b=document.createElement('button');b.textContent=x[0];b.onclick=function(){
+ Array.prototype.forEach.call(pt.children,function(c){c.setAttribute('aria-pressed','false')});b.setAttribute('aria-pressed','true');
+ el('pfout').className='stage split';el('pfout').innerHTML='<div class="row">'+chips([[x[1],'prefix','prefix'],[x[2],'root','base']])+'</div><div class="mean">'+x[3]+' = '+x[4]+'</div><p class="note">'+x[5]+'</p>'};pt.appendChild(b)});
+el('pfout').innerHTML='<p class="note">Choose a prefix.</p>';
+[['kan-','kort-','do'],['bar-','bort-','carry'],['nind-','nesht-','sit'],['āy-','ātk-','come']].forEach(function(x){var b=document.createElement('button');b.className='tile';b.setAttribute('aria-pressed','false');
+ b.innerHTML='<span class="chip t-root tw">'+x[0]+'</span><span class="td">“'+x[2]+'”: tap for the past stem</span>';
+ b.onclick=function(){var on=b.getAttribute('aria-pressed')==='true';b.setAttribute('aria-pressed',String(!on));
+  b.innerHTML='<span class="chip '+(on?'t-root':'t-suffix')+' tw">'+(on?x[0]:x[1])+'</span><span class="td">“'+x[2]+'”: '+(on?'present stem. Tap for the past stem':'past stem. Tap to go back')+'</span>'};el('stems').appendChild(b)});
+function mkQuiz(id,items,opts){var i=0,s=0,box=el(id);
+ function d(){
+  if(i>=items.length){box.innerHTML='<div class="mean">Score: '+s+' / '+items.length+'</div><button class="act" id="'+id+'r">Play again</button>';el(id+'r').onclick=function(){i=0;s=0;d()};return}
+  box.innerHTML='<div class="eb">Question '+(i+1)+' of '+items.length+'</div><div class="big">'+items[i][0]+'</div><div class="quizbtns" style="margin-top:10px">'+opts.map(function(o){return '<button data-a="'+o+'">'+o+'</button>'}).join('')+'</div><div class="fb" id="'+id+'f"></div>';
+  Array.prototype.forEach.call(box.querySelectorAll('button[data-a]'),function(b){b.onclick=function(){
+   var ok=b.dataset.a===items[i][1];if(ok)s++;
+   Array.prototype.forEach.call(box.querySelectorAll('button[data-a]'),function(c){c.disabled=true});
+   el(id+'f').innerHTML='<span class="'+(ok?'ok':'bad')+'">'+(ok?'Correct. ':'Not quite. It is '+items[i][1]+'. ')+'</span>'+items[i][2]+' <button class="act" id="'+id+'n">Next</button>';
+   el(id+'n').onclick=function(){i++;d()};el(id+'n').focus()}});}
+ d()}
+mkQuiz('q3',[['deljam','compounding','del “heart” + jam “collected”.'],['garmī','derivation','garm + the suffix -ī gives an abstract noun.'],['kōshesh','borrowing','Taken from Persian.'],['rahmdel','compounding','rahm “mercy” + del “heart”.'],['warāk','derivation','war- “eat” + -āk gives a noun.'],['parwardegār','borrowing','Taken from Persian.'],['wānendag','derivation','wān- “read” + -endag gives an adjective.'],['delsyāh','compounding','del + syāh, with a lexicalised meaning.']],['compounding','derivation','borrowing']);
+var WG=[['janōk','jan- “hit” + -ōk','one who hits','the agent suffix -ōk (as in nindōk)'],['sharī','shar “good” + -ī','goodness','the abstract suffix -ī (as in garmī)']];
+WG.forEach(function(x,i){var c=document.createElement('div');c.className='card';
+ c.innerHTML='<h3>'+x[0]+'</h3><p>'+x[1]+' = “'+x[2]+'”. Tests '+x[3]+'.</p><label for="wr'+i+'">Speaker’s response</label><select id="wr'+i+'"><option value="">Not tested yet</option><option>accepted</option><option>understandable but unnatural</option><option>rejected</option></select><label for="wa'+i+'">Alternative offered</label><input type="text" id="wa'+i+'"><label for="we'+i+'">Known as an existing word?</label><select id="we'+i+'"><option value="">Not asked</option><option>yes</option><option>no</option></select>';
+ el('wug').appendChild(c)});
+function wsum(){var t=[];WG.forEach(function(x,i){var r=el('wr'+i).value;if(r){t.push(x[0]+': '+r+(el('wa'+i).value?'; alternative “'+el('wa'+i).value+'”':'')+(el('we'+i).value?'; existing word: '+el('we'+i).value:''))}});
+ el('wsum').textContent=t.length?'Your record: '+t.join(' | '):'No speaker results recorded yet.'}
+el('wug').addEventListener('change',wsum);el('wug').addEventListener('input',wsum);wsum();
+var SN=[[[['Kochekē','dog-INDEF'],['gendān','see-1SG']],'“I see a dog.”'],[[['Chizzē','thing-INDEF'],['genday','see-2SG']],'“Do you see anything?”'],[[['Ē','this'],['lōgay','house-GEN'],['darwāzag','door'],['harāb','broken'],['ent','is']],'“The door of this house is broken.”']];
+var sn=el('sen');SN.forEach(function(x,i){var b=document.createElement('button');b.textContent='Sentence '+(i+1);b.onclick=function(){
+ Array.prototype.forEach.call(sn.children,function(c){c.setAttribute('aria-pressed','false')});b.setAttribute('aria-pressed','true');
+ var o=el('sout2');o.innerHTML='<div class="words" id="tk"></div><div class="mean" id="gl" style="margin-top:12px" aria-live="polite">Tap a word.</div><p class="note">Translation: '+x[1]+'</p>';
+ x[0].forEach(function(t){var w=document.createElement('button');w.textContent=t[0];w.onclick=function(){el('gl').textContent=t[0]+' = '+t[1]};el('tk').appendChild(w)})};sn.appendChild(b)});
+el('sout2').innerHTML='<p class="note">Choose a sentence.</p>';
+</script>
+</body>
+</html>
