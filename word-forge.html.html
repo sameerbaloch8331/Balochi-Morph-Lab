@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Word Forge: an English morphology game</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Nunito:wght@500;700;800&display=swap">
+<style>
+:root{--bg:#FBFAF6;--fg:#1B2B33;--mut:#4A5B64;--card:#FFFFFF;--line:#C9D3D8;--brand:#1F4E5F;--on:#FFFFFF;
+--root:#BFE3DD;--prefix:#F9DDA0;--suffix:#F4B9B9;--chipfg:#10303A;--ok:#1E6B3A;--bad:#9A2A2A;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10181C;--fg:#E8EEF0;--mut:#A9B8BF;--card:#18242A;--line:#33464F;--brand:#2C7A8C;
+--root:#1F5F5A;--prefix:#7A5A10;--suffix:#7E3A3A;--chipfg:#F2F7F8;--ok:#7FD39B;--bad:#F2A0A0;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#10181C;--fg:#E8EEF0;--mut:#A9B8BF;--card:#18242A;--line:#33464F;--brand:#2C7A8C;
+--root:#1F5F5A;--prefix:#7A5A10;--suffix:#7E3A3A;--chipfg:#F2F7F8;--ok:#7FD39B;--bad:#F2A0A0;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:Nunito,system-ui,sans-serif;font-size:18px;line-height:1.5}
+main{max-width:760px;margin:0 auto;padding:18px 16px 40px}
+h1,h2{font-family:Fredoka,system-ui,sans-serif;margin:0}
+header{background:var(--brand);color:var(--on);border-radius:22px;padding:22px;margin-bottom:16px}
+header h1{font-size:clamp(34px,8vw,52px);line-height:1.1}
+header p{margin:6px 0 0}
+section{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px}
+button{font:inherit;font-weight:800;color:var(--fg);background:var(--card);border:2px solid var(--line);border-radius:12px;padding:10px 18px;min-height:48px;cursor:pointer}
+button:hover:not(:disabled){border-color:var(--brand)}
+button:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+button:disabled{opacity:.4;cursor:not-allowed}
+.go{background:var(--brand);color:var(--on);border-color:var(--brand)}
+.lv{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.chip{display:inline-block;padding:2px 12px;border-radius:9px;color:var(--chipfg);font-weight:800;margin:2px}
+.t-root{background:var(--root)}.t-prefix{background:var(--prefix)}.t-suffix{background:var(--suffix)}
+.hud{display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;font-weight:800;color:var(--mut)}
+.hud b{color:var(--fg);font-size:22px}
+.bar{height:12px;background:var(--line);border-radius:99px;margin:10px 0 16px;overflow:hidden}
+.bar i{display:block;height:100%;width:100%;background:var(--brand);transition:width .1s linear}
+.clue{font-family:Fredoka,sans-serif;font-size:clamp(24px,5vw,32px);line-height:1.25}
+.slots,.tiles{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.slot{min-width:84px;min-height:58px;border:3px dashed var(--line);border-radius:14px;font-size:24px;padding:6px 14px}
+.slot.on{border-style:solid;border-color:var(--brand)}
+.tile{font-size:24px;min-width:70px;min-height:58px}
+.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.fb{margin-top:10px;padding:14px;border-radius:14px;border:2px solid var(--line)}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+.big{font-family:Fredoka,sans-serif;font-size:clamp(32px,8vw,48px)}
+.mut{color:var(--mut)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0}
+.card{border:2px solid var(--line);border-radius:14px;padding:10px 14px}
+ul{margin:6px 0;padding-left:22px}
+footer{margin-top:18px;color:var(--mut);font-size:15px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<header><h1>Word Forge</h1><p>Build English words from their morphemes. Clear three levels to win.</p></header>
+
+<section id="start">
+<h2>How to play</h2>
+<p>Read the meaning, then tap the tiles in the right order to build the word. Each level has 6 words and you get 3 lives per level. Finish all 6 words with a life left to move up.</p>
+<p><span class="chip t-prefix">prefix</span> comes before the root, <span class="chip t-root">root</span> carries the core meaning, <span class="chip t-suffix">suffix</span> comes after it.</p>
+<div class="cards">
+<div class="card"><b>Level 1: Easy</b><br><span class="mut">2 parts, 30 seconds</span><br><span class="chip t-prefix">un</span><span class="chip t-root">happy</span></div>
+<div class="card"><b>Level 2: Moderate</b><br><span class="mut">3 parts, 35 seconds</span><br><span class="chip t-prefix">un</span><span class="chip t-root">break</span><span class="chip t-suffix">able</span></div>
+<div class="card"><b>Level 3: Hard</b><br><span class="mut">4 parts, 45 seconds</span><br><span class="chip t-prefix">dis</span><span class="chip t-root">respect</span><span class="chip t-suffix">ful</span><span class="chip t-suffix">ly</span></div>
+</div>
+<div class="lv"><button class="go" id="begin">Start game</button></div>
+<p class="mut" id="bestline"></p>
+</section>
+
+<section id="game" hidden>
+<div class="hud"><div>Level <b id="lvn"></b></div><div>Score <b id="sc">0</b></div><div>Streak <b id="st">0</b></div><div id="hearts" aria-label="Lives"></div><div>Word <b id="qn">1</b> of <span id="qt">6</span></div></div>
+<div class="bar" aria-hidden="true"><i id="bar"></i></div>
+<div class="clue" id="clue"></div>
+<div class="slots" id="slots" role="group" aria-label="Your word"></div>
+<div class="tiles" id="tiles" role="group" aria-label="Tiles"></div>
+<button id="clr">Clear</button>
+<div class="fb" id="fb" hidden aria-live="polite"></div>
+</section>
+
+<section id="lvl" hidden>
+<h2 id="lt"></h2>
+<div class="big" id="ls"></div>
+<p id="la"></p>
+<p id="ln"></p>
+<div class="lv"><button class="go" id="cont">Continue</button></div>
+</section>
+
+<section id="end" hidden>
+<h2 id="et"></h2>
+<div class="big" id="fs"></div>
+<p id="fa"></p>
+<div id="miss"></div>
+<div class="lv"><button class="go" id="retry" hidden>Try this level again</button><button id="again">Back to start</button></div>
+</section>
+
+<footer>Word Forge for ENG 222 Morphology &amp; Syntax. Made by Raheel Mairaj and Muhammad Sameer.</footer>
+</main>
+<script>
+var PRE={un:'not',re:'again',dis:'not, the opposite of',mis:'wrongly',pre:'before'};
+var SUF={er:'one who does it',less:'without',ness:'state or quality of',ful:'full of',ly:'like, in the manner of',able:'able to be',ment:'result or act of',ed:'past tense (inflection)',ing:'continuing action (inflection)',s:'more than one (plural inflection)'};
+var Q2=[
+['not happy',['un','happy'],['re','less','ing']],
+['write again',['re','write'],['un','ness','ful']],
+['one who teaches',['teach','er'],['un','less','ful']],
+['without care',['care','less'],['pre','ment','mis']],
+['the state of being kind',['kind','ness'],['pre','mis','ment']],
+['see beforehand',['pre','view'],['un','ness','ment']],
+['the opposite of agree',['dis','agree'],['un','ful','less']],
+['one who sings',['sing','er'],['re','ness','less']],
+['to read wrongly',['mis','read'],['ness','ful','ly']],
+['full of play',['play','ful'],['dis','ness','pre']],
+['in a friendly way (like a friend)',['friend','ly'],['ness','pre','ment']],
+['able to be broken',['break','able'],['ness','ful','ly']]];
+var Q3=[
+['not able to be broken',['un','break','able'],['ness','ful','dis']],
+['the state of not being kind',['un','kind','ness'],['re','ful','able']],
+['building again',['re','build','ing'],['ness','ly','ful']],
+['in a careless way',['care','less','ly'],['un','dis','pre']],
+['not friendly',['un','friend','ly'],['re','ness','ful']],
+['not able to be read',['un','read','able'],['ness','ful','mis']],
+['showing no respect',['dis','respect','ful'],['re','ness','ly']],
+['heated in advance',['pre','heat','ed'],['ness','ly','dis']]];
+var Q4=[
+['in a way that shows no respect',['dis','respect','ful','ly'],['re','ment','ed']],
+['the state of not being helpful',['un','help','ful','ness'],['re','ment','ed']],
+['in a way that shows no thought',['un','think','ing','ly'],['re','ed','ment']],
+['in a way that gives the wrong idea',['mis','lead','ing','ly'],['un','ness','ful']],
+['the state of not being loyal',['un','faith','ful','ness'],['dis','ed','ment']],
+['more than one act of disagreeing',['dis','agree','ment','s'],['un','ness','ly']],
+['in a way that does not help',['un','help','ful','ly'],['re','ed','ment']],
+['in a way that shows no thanks',['un','thank','ful','ly'],['re','ed','ment']]];
+var LV=[{name:'Easy',next:'Moderate (3-part words)',limit:30000,mult:1,pool:Q2},{name:'Moderate',next:'Hard (4-part words)',limit:35000,mult:1.5,pool:Q3},{name:'Hard',next:'',limit:45000,mult:2,pool:Q4}];
+function el(i){return document.getElementById(i)}
+function kind(p){return PRE[p]!==undefined?'prefix':SUF[p]!==undefined?'suffix':'root'}
+function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function show(id){['start','game','lvl','end'].forEach(function(s){el(s).hidden=s!==id})}
+function chips(parts){return parts.map(function(p){var k=kind(p);return '<span class="chip t-'+k+'">'+(k==='prefix'?p+'-':k==='suffix'?'-'+p:p)+'</span>'}).join(' + ')}
+function lines(parts){return '<ul>'+parts.map(function(p){var k=kind(p);
+ return k==='root'?'<li><b>'+p+'</b> is the root.</li>':'<li><b>'+(k==='prefix'?p+'-':'-'+p)+'</b> is a '+k+' meaning “'+(k==='prefix'?PRE[p]:SUF[p])+'”.</li>'}).join('')+'</ul>'}
+var best=0;try{best=parseInt(localStorage.getItem('wfbest')||'0',10)||0}catch(e){}
+function bestLine(){el('bestline').textContent=best?'Best score on this device: '+best:''}
+bestLine();
+function saveBest(){if(G.score>best){best=G.score;try{localStorage.setItem('wfbest',String(best))}catch(e){}return true}return false}
+var G={};
+function startGame(){G={score:0,lv:0,allMiss:[]};loadLevel()}
+function loadLevel(){
+ var L=LV[G.lv];G.q=shuf(L.pool).slice(0,6);G.i=0;G.lives=3;G.right=0;G.streak=0;G.base=G.score;G.limit=L.limit;G.locked=false;
+ el('qt').textContent=G.q.length;el('lvn').textContent=(G.lv+1)+': '+L.name;show('game');showQ();
+}
+function hearts(){var s='';for(var i=0;i<3;i++)s+=i<G.lives?'\u2665 ':'\u2661 ';el('hearts').textContent=s;el('hearts').setAttribute('aria-label',G.lives+' lives left')}
+function hud(){el('sc').textContent=G.score;el('st').textContent=G.streak;el('qn').textContent=G.i+1;hearts()}
+function showQ(){
+ var q=G.q[G.i];G.t=q;G.placed=[];G.locked=false;
+ G.tiles=shuf(q[1].concat(q[2]));
+ hud();el('fb').hidden=true;
+ el('clue').textContent='Build a word that means: “'+q[0]+'”';
+ var tl=el('tiles');tl.innerHTML='';
+ G.tiles.forEach(function(t,i){var b=document.createElement('button');b.className='tile';b.textContent=t;b.onclick=function(){place(i,b)};tl.appendChild(b)});
+ drawSlots();
+ G.t0=Date.now();clearInterval(G.iv);el('bar').style.width='100%';
+ G.iv=setInterval(function(){var left=G.limit-(Date.now()-G.t0);el('bar').style.width=Math.max(0,left/G.limit*100)+'%';if(left<=0){answer(false,true)}},100);
+}
+function drawSlots(){
+ var s=el('slots');s.innerHTML='';
+ for(var i=0;i<G.t[1].length;i++){(function(i){var b=document.createElement('button');b.className='slot'+(G.placed[i]!==undefined?' on':'');
+  b.textContent=G.placed[i]!==undefined?G.tiles[G.placed[i]]:'';b.setAttribute('aria-label','Slot '+(i+1));
+  b.onclick=function(){if(G.locked||G.placed[i]===undefined)return;var ti=G.placed[i];G.placed[i]=undefined;el('tiles').children[ti].disabled=false;drawSlots()};s.appendChild(b)})(i)}
+}
+function place(ti,b){
+ if(G.locked)return;var n=G.t[1].length,k=-1;
+ for(var i=0;i<n;i++){if(G.placed[i]===undefined){k=i;break}}
+ if(k<0)return;G.placed[k]=ti;b.disabled=true;drawSlots();
+ var full=true;for(var j=0;j<n;j++){if(G.placed[j]===undefined)full=false}
+ if(full)setTimeout(check,200);
+}
+function check(){
+ if(G.locked)return;var w=G.placed.map(function(i){return G.tiles[i]}).join('');
+ answer(w===G.t[1].join(''),false);
+}
+el('clr').onclick=function(){if(G.locked)return;G.placed=[];Array.prototype.forEach.call(el('tiles').children,function(b){b.disabled=false});drawSlots()};
+function answer(ok,timeout){
+ if(G.locked)return;G.locked=true;clearInterval(G.iv);
+ var q=G.t,word=q[1].join(''),left=Math.max(0,G.limit-(Date.now()-G.t0))/1000,msg;
+ if(ok){G.streak++;G.right++;var pts=Math.round((100+left*3+(G.streak-1)*10)*LV[G.lv].mult);G.score+=pts;msg='<span class="ok big">Correct! +'+pts+'</span>'}
+ else{G.streak=0;G.lives--;G.allMiss.push(q);msg='<span class="bad big">'+(timeout?'Time’s up.':'Not quite.')+'</span>';el('slots').classList.add('shake');setTimeout(function(){el('slots').classList.remove('shake')},400)}
+ hud();
+ var out=G.lives<=0,last=G.i>=G.q.length-1,lab,fn;
+ if(out){lab='See results';fn=levelFail}
+ else if(last){if(G.lv<2){lab='Level complete';fn=levelUp}else{lab='See results';fn=finishWin}}
+ else{lab='Next word';fn=function(){G.i++;showQ()}}
+ var f=el('fb');f.hidden=false;
+ f.innerHTML=msg+'<p style="margin:6px 0"><b>'+word+'</b> = '+chips(q[1])+'</p>'+lines(q[1])+'<button class="go" id="nx">'+lab+'</button>';
+ el('nx').onclick=fn;el('nx').focus();
+}
+function levelUp(){
+ var L=LV[G.lv];saveBest();show('lvl');
+ el('lt').textContent='Level '+(G.lv+1)+' ('+L.name+') complete!';
+ el('ls').textContent='Score: '+G.score;
+ el('la').textContent=G.right+' of 6 correct. Lives left: '+G.lives+'.';
+ el('ln').textContent='Next up: '+L.next+'.';
+ el('cont').textContent='Start level '+(G.lv+2);
+}
+function review(){
+ var m=G.allMiss;
+ return m.length?'<h2 style="font-size:22px">Words to review</h2>'+m.map(function(q){return '<p style="margin:6px 0"><b>'+q[1].join('')+'</b> = '+chips(q[1])+' <span class="mut">(“'+q[0]+'”)</span></p>'}).join(''):'<p>You made no mistakes. Well done!</p>';
+}
+function levelFail(){
+ show('end');var nb=saveBest();
+ el('et').textContent='Out of lives on level '+(G.lv+1)+' ('+LV[G.lv].name+')';
+ el('fs').textContent='Score: '+G.score;
+ el('fa').textContent='You got '+G.right+' of 6 right on this level.'+(nb?' New best score!':'');
+ el('miss').innerHTML=review();el('retry').hidden=false;bestLine();
+}
+function finishWin(){
+ show('end');var nb=saveBest();
+ el('et').textContent='You cleared all 3 levels!';
+ el('fs').textContent='Final score: '+G.score;
+ el('fa').textContent='Easy, Moderate and Hard are all complete.'+(nb?' New best score!':'');
+ el('miss').innerHTML=review();el('retry').hidden=true;bestLine();
+}
+el('begin').onclick=startGame;
+el('cont').onclick=function(){G.lv++;loadLevel()};
+el('retry').onclick=function(){G.score=G.base;G.allMiss=[];loadLevel()};
+el('again').onclick=function(){bestLine();show('start')};
+</script>
+</body>
+</html>
